@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="World Quest">
+<title>THE WORLD QUEST – Cooper's Journey</title>
+<style>
+  :root{
+    --ink:#2a1f14; --paper:#f6ecd6; --paper2:#efe0bf; --gold:#c8962e;
+    --red:#c0392b; --blue:#1f3b63; --green:#2e7d4f;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:#15110c;color:var(--ink);
+    font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;overscroll-behavior:none}
+  button{font:inherit;cursor:pointer}
+
+  /* ---------- HOME ---------- */
+  #home{min-height:100%;padding:calc(env(safe-area-inset-top) + 28px) 28px 40px;
+    background:radial-gradient(circle at 20% 10%,#fff6e0 0,var(--paper) 45%,var(--paper2) 100%)}
+  .brand{text-align:center;margin-bottom:24px}
+  .brand h1{margin:0;font-size:clamp(28px,5vw,52px);letter-spacing:2px;color:var(--blue);
+    text-shadow:2px 2px 0 #fff,4px 4px 0 rgba(0,0,0,.12)}
+  .brand p{margin:6px 0 0;font-size:clamp(15px,2.2vw,20px);color:#7a5a2c;font-style:italic}
+  .continue{display:block;margin:0 auto 26px;padding:14px 28px;border:0;border-radius:40px;
+    background:var(--red);color:#fff;font-size:20px;font-weight:bold;box-shadow:0 4px 0 #8e271c}
+  .continue[hidden]{display:none}
+  .continue:active{transform:translateY(3px);box-shadow:0 1px 0 #8e271c}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px;max-width:1100px;margin:0 auto}
+  .card{background:#fffaf0;border:3px solid var(--ink);border-radius:14px;overflow:hidden;
+    box-shadow:5px 5px 0 rgba(42,31,20,.25);text-align:left;padding:0;color:var(--ink);
+    display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch}
+  .card:active{transform:translate(2px,2px);box-shadow:3px 3px 0 rgba(42,31,20,.25)}
+  .thumb{aspect-ratio:4/3;background:#e9d7ad center/cover no-repeat;display:flex;align-items:center;justify-content:center;
+    font-size:40px;color:#a07c3c;border-bottom:3px solid var(--ink)}
+  .card .info{padding:12px 14px 14px}
+  .card .num{font-size:13px;font-weight:bold;color:var(--gold);letter-spacing:1px}
+  .card .title{font-size:19px;font-weight:bold;margin-top:2px}
+  .card .meta{font-size:14px;color:#7a6a55;margin-top:6px}
+  .card.soon{opacity:.55;cursor:default}
+  .bar{height:6px;background:#eadbb8;border-radius:3px;margin-top:8px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--green)}
+
+  /* ---------- READER ---------- */
+  #reader{position:fixed;inset:0;background:#15110c;display:none;flex-direction:column}
+  #reader.on{display:flex}
+  .top{display:flex;align-items:center;gap:10px;padding:calc(env(safe-area-inset-top) + 8px) 14px 8px;color:#f3e6c8;
+    transition:opacity .3s}
+  .top button{background:rgba(255,255,255,.12);color:#f3e6c8;border:0;border-radius:20px;padding:8px 16px;font-size:16px}
+  .top .t{flex:1;text-align:center;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;touch-action:pan-y}
+  .page{position:relative;aspect-ratio:4/3;max-width:100%;max-height:100%;width:min(100vw,calc((100vh - 120px) * 4 / 3));
+    background:#000;border-radius:6px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.6);transition:transform .25s,opacity .25s}
+  .page img{width:100%;height:100%;object-fit:contain;display:block;user-select:none;-webkit-user-drag:none}
+  .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    background:repeating-linear-gradient(45deg,var(--paper) 0 22px,var(--paper2) 22px 44px);color:#7a5a2c;text-align:center;padding:30px}
+  .ph b{font-size:clamp(22px,4vw,40px);color:var(--blue)}
+  .ph span{font-size:clamp(14px,2vw,18px)}
+  .tap{position:absolute;top:0;bottom:0;width:30%;z-index:2}
+  .tap.l{left:0}.tap.r{right:0}
+  .bottom{display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 14px calc(env(safe-area-inset-bottom) + 10px);color:#f3e6c8}
+  .bottom button{background:rgba(255,255,255,.12);color:#f3e6c8;border:0;border-radius:50%;width:46px;height:46px;font-size:22px}
+  .bottom button:disabled{opacity:.25}
+  .count{min-width:90px;text-align:center;font-size:15px}
+
+  /* ---------- PUZZLE ---------- */
+  .puzzle{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px;
+    background:rgba(255,250,235,.95);border:3px solid var(--ink);border-radius:18px;padding:12px 18px;box-shadow:4px 4px 0 rgba(0,0,0,.3);max-width:92%}
+  .puzzle .q{font-weight:bold;font-size:clamp(14px,2vw,18px);text-align:center}
+  .opts{display:flex;gap:14px}
+  .opts button{width:clamp(54px,8vw,74px);height:clamp(54px,8vw,74px);border-radius:50%;border:3px solid var(--ink);
+    background:#fff;font-size:clamp(24px,3.5vw,34px);font-weight:bold;color:var(--ink);box-shadow:0 4px 0 var(--ink)}
+  .opts button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+  .opts button.wrong{background:#f6d0cb;animation:shake .4s}
+  .opts button.right{background:#c9ecd5}
+  .fb{font-size:clamp(14px,2vw,18px);text-align:center;min-height:1.2em}
+  .fb.good{color:var(--green);font-weight:bold}.fb.bad{color:var(--red)}
+  .skip{background:none;border:0;color:#7a6a55;text-decoration:underline;font-size:14px}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+  .rotate{display:none;position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;
+    padding:6px 14px;border-radius:16px;font-size:14px;z-index:4;white-space:nowrap}
+  @media (orientation:portrait){.rotate{display:block}}
+</style>
+</head>
+<body>
+
+<!-- ===================== HOME ===================== -->
+<div id="home">
+  <div class="brand">
+    <h1>THE WORLD QUEST</h1>
+    <p>Cooper's Journey · Book 1</p>
+  </div>
+  <button class="continue" id="continueBtn" hidden></button>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- ===================== READER ===================== -->
+<div id="reader">
+  <div class="top" id="top">
+    <button id="backBtn">‹ Chapters</button>
+    <div class="t" id="chTitle"></div>
+    <span style="width:110px"></span>
+  </div>
+  <div class="stage" id="stage">
+    <div class="rotate">↻ Turn your iPad sideways for the best view</div>
+    <div class="page" id="page"></div>
+  </div>
+  <div class="bottom">
+    <button id="prevBtn" aria-label="Previous page">‹</button>
+    <div class="count" id="count"></div>
+    <button id="nextBtn" aria-label="Next page">›</button>
+  </div>
+</div>
+
+<script src="chapters.js"></script>
+<script>
+const CHAPTERS = window.CHAPTERS || [];
+
+const $ = s => document.querySelector(s);
+const store = {
+  get(k){ try { return JSON.parse(localStorage.getItem("wq_"+k)); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem("wq_"+k, JSON.stringify(v)); } catch(e){} }
+};
+const pad = n => String(n).padStart(2,"0");
+const src = (ch,p) => `images/${ch.id}/${pad(p)}.${ch.ext||"png"}`;
+
+let ch = null, p = 1;
+const solved = store.get("solved") || {};
+
+/* ---------- HOME ---------- */
+function renderHome(){
+  const grid = $("#grid"); grid.innerHTML = "";
+  const progress = store.get("progress") || {};
+  CHAPTERS.forEach((c,i)=>{
+    const b = document.createElement("button");
+    b.className = "card" + (c.ready ? "" : " soon");
+    const read = progress[c.id] || 0;
+    const pct = c.ready && c.pages ? Math.round(read / c.pages * 100) : 0;
+    b.innerHTML = `
+      <div class="thumb">${c.ready ? "" : "🔒"}</div>
+      <div class="info">
+        <div class="num">CHAPTER ${i+1}</div>
+        <div class="title">${c.title}</div>
+        <div class="meta">${c.ready ? (read ? (read>=c.pages ? "Finished ✓" : `Page ${read} of ${c.pages}`) : c.subtitle) : "Coming soon"}</div>
+        ${c.ready ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}
+      </div>`;
+    if (c.ready){
+      const img = new Image();
+      img.onload = () => { b.querySelector(".thumb").style.backgroundImage = `url(${img.src})`; };
+      img.src = src(c,1);
+      b.onclick = () => openChapter(c, read && read < c.pages ? read : 1);
+    }
+    grid.appendChild(b);
+  });
+  const last = store.get("last");
+  const lc = last && CHAPTERS.find(c => c.id === last.id && c.ready);
+  const cb = $("#continueBtn");
+  if (lc && last.page < lc.pages){
+    cb.hidden = false;
+    cb.textContent = `▶ Continue: ${lc.title}, page ${last.page}`;
+    cb.onclick = () => openChapter(lc, last.page);
+  } else cb.hidden = true;
+}
+
+/* ---------- READER ---------- */
+function openChapter(c, page){
+  ch = c; p = page || 1;
+  $("#home").style.display = "none";
+  $("#reader").classList.add("on");
+  $("#chTitle").textContent = c.title;
+  history.replaceState(null, "", `#${c.id}/${p}`);
+  show();
+}
+function closeReader(){
+  $("#reader").classList.remove("on");
+  $("#home").style.display = "";
+  history.replaceState(null, "", location.pathname);
+  renderHome();
+}
+
+function show(){
+  const page = $("#page");
+  page.innerHTML = `
+    <img alt="Page ${p}" draggable="false">
+    <div class="tap l"></div><div class="tap r"></div>`;
+  const img = page.querySelector("img");
+  img.onerror = () => {
+    img.remove();
+    page.insertAdjacentHTML("afterbegin",
+      `<div class="ph"><b>Page ${p}</b><span>Picture coming soon</span><span style="opacity:.7">${src(ch,p)}</span></div>`);
+  };
+  img.src = src(ch,p);
+  if (p < ch.pages){ const pre = new Image(); pre.src = src(ch,p+1); }
+
+  page.querySelector(".tap.l").onclick = prev;
+  page.querySelector(".tap.r").onclick = next;
+
+  const pz = ch.puzzles && ch.puzzles[p];
+  if (pz) addPuzzle(page, pz);
+
+  $("#count").textContent = `${p} / ${ch.pages}`;
+  $("#prevBtn").disabled = p <= 1;
+  $("#nextBtn").textContent = p >= ch.pages ? "✓" : "›";
+  $("#nextBtn").disabled = locked();
+
+  const progress = store.get("progress") || {};
+  progress[ch.id] = Math.max(progress[ch.id] || 0, p);
+  store.set("progress", progress);
+  store.set("last", { id: ch.id, page: p });
+  history.replaceState(null, "", `#${ch.id}/${p}`);
+}
+
+function key(){ return ch.id + "_" + p; }
+function locked(){ const pz = ch.puzzles && ch.puzzles[p]; return !!pz && !solved[key()]; }
+
+function addPuzzle(page, pz){
+  const box = document.createElement("div");
+  box.className = "puzzle";
+  const done = solved[key()];
+  box.innerHTML = `<div class="q">${pz.question}</div>
+    <div class="opts">${pz.options.map(o=>`<button data-o="${o}" class="${done && o===pz.answer ? "right":""}">${o}</button>`).join("")}</div>
+    <div class="fb ${done ? "good":""}">${done ? pz.right : ""}</div>`;
+  let tries = 0;
+  box.querySelectorAll(".opts button").forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      const fb = box.querySelector(".fb");
+      if (btn.dataset.o === pz.answer){
+        box.querySelectorAll(".opts button").forEach(b=>b.classList.remove("wrong"));
+        btn.classList.add("right");
+        fb.className = "fb good"; fb.textContent = pz.right;
+        solved[key()] = true; store.set("solved", solved);
+        $("#nextBtn").disabled = false;
+      } else {
+        tries++;
+        btn.classList.remove("wrong"); void btn.offsetWidth; btn.classList.add("wrong");
+        fb.className = "fb bad"; fb.textContent = pz.wrong;
+        if (tries >= 3 && !box.querySelector(".skip")){
+          const s = document.createElement("button");
+          s.className = "skip"; s.textContent = "Show me the answer";
+          s.onclick = ev => { ev.stopPropagation(); box.querySelector(`[data-o="${pz.answer}"]`).click(); s.remove(); };
+          box.appendChild(s);
+        }
+      }
+    };
+  });
+  page.appendChild(box);
+}
+
+function next(){
+  if (locked()){
+    const fb = document.querySelector(".puzzle .fb");
+    if (fb){ fb.className = "fb bad"; fb.textContent = "Pick A, B or C first!"; }
+    return;
+  }
+  if (p < ch.pages){ p++; show(); } else closeReader();
+}
+function prev(){ if (p > 1){ p--; show(); } }
+
+$("#nextBtn").onclick = next;
+$("#prevBtn").onclick = prev;
+$("#backBtn").onclick = closeReader;
+
+document.addEventListener("keydown", e => {
+  if (!$("#reader").classList.contains("on")) return;
+  if (e.key === "ArrowRight") next();
+  if (e.key === "ArrowLeft") prev();
+  if (e.key === "Escape") closeReader();
+});
+
+/* swipe */
+let sx = null, sy = null;
+const stage = $("#stage");
+stage.addEventListener("touchstart", e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
+stage.addEventListener("touchend", e => {
+  if (sx === null) return;
+  const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) (dx < 0 ? next : prev)();
+  sx = null;
+}, {passive:true});
+
+/* open straight to a page from a link like  ...#ch01/5  */
+(function start(){
+  const m = location.hash.match(/^#(ch\d+)\/(\d+)$/);
+  const c = m && CHAPTERS.find(x => x.id === m[1] && x.ready);
+  renderHome();
+  if (c) openChapter(c, Math.min(Math.max(1, +m[2]), c.pages));
+})();
+</script>
+</body>
+</html>
