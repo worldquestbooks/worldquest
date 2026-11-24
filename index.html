@@ -137,14 +137,15 @@ function renderHome(){
   CHAPTERS.forEach((c,i)=>{
     const b = document.createElement("button");
     b.className = "card" + (c.ready ? "" : " soon");
+    const label = c.num || (i+1);
     const read = progress[c.id] || 0;
     const pct = c.ready && c.pages ? Math.round(read / c.pages * 100) : 0;
     b.innerHTML = `
-      <div class="thumb">${c.ready ? "" : "🔒"}</div>
+      <div class="thumb">${c.ready ? "" : (c.inBook ? "📖" : "🔒")}</div>
       <div class="info">
-        <div class="num">CHAPTER ${i+1}</div>
+        <div class="num">CHAPTER ${label}</div>
         <div class="title">${c.title}</div>
-        <div class="meta">${c.ready ? (read ? (read>=c.pages ? "Finished ✓" : `Page ${read} of ${c.pages}`) : c.subtitle) : "Coming soon"}</div>
+        <div class="meta">${c.ready ? (read ? (read>=c.pages ? "Finished ✓" : `Page ${read} of ${c.pages}`) : c.subtitle) : (c.inBook ? "In the printed book" : "Coming soon")}</div>
         ${c.ready ? `<div class="bar"><i style="width:${pct}%"></i></div>` : ""}
       </div>`;
     if (c.ready){
