@@ -65,8 +65,41 @@ window.CHAPTERS = [
     }
   },
 
-  { id: "ch04", num: 4,  title: "Lucerne",              pages: 0, ready: false },
-  { id: "ch05", num: 5,  title: "The Swiss Alps",       pages: 0, ready: false },
+  {
+    id: "ch04", num: 4,
+    title: "Lucerne",
+    subtitle: "The quiet lion…",
+    pages: 36,
+    ready: true,
+    ext: "png",
+    puzzles: {
+      26: {
+        question: "Ah Gong says: find 'the other one.' Which is it?",
+        options: ["A", "B", "C"],
+        answer: "B",
+        wrong: "Not quite! Look at what's under the lion's paw — then find the OTHER one.",
+        right: "Yes! The shield with the Swiss cross!"
+      }
+    }
+  },
+
+  {
+    id: "ch05", num: 5,
+    title: "The Swiss Alps",
+    subtitle: "Never alone…",
+    pages: 36,
+    ready: true,
+    ext: "png",
+    puzzles: {
+      29: {
+        question: "Which path is right for a team in sneakers?",
+        options: ["A", "B", "C"],
+        answer: "A",
+        wrong: "Not quite! Check Asawin's notebook — what does each color mean?",
+        right: "Right! Yellow is the walking trail everyone can do."
+      }
+    }
+  },
   { id: "ch06", num: 6,  title: "Istanbul",             pages: 0, ready: false },
   { id: "ch07", num: 7,  title: "Australia",            pages: 0, ready: false },
   { id: "ch08", num: 8,  title: "A U.S. National Park", pages: 0, ready: false },
