@@ -17,7 +17,7 @@ window.CHAPTERS = [
     ready: true,
     ext: "png",
     puzzles: {
-      18: {
+      19: {
         question: "Which postcard matches the clue?",
         options: ["A", "B", "C"],
         answer: "B",
