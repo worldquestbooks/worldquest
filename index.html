@@ -78,6 +78,18 @@
   .fb{font-size:clamp(14px,2vw,18px);text-align:center;min-height:1.2em}
   .fb.good{color:var(--green);font-weight:bold}.fb.bad{color:var(--red)}
   .skip{background:none;border:0;color:#7a6a55;text-decoration:underline;font-size:14px}
+
+  .puzzle.match{width:92%;padding:8px 14px;gap:6px}
+  .match .rows{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;align-items:center}
+  .match .row{display:flex;align-items:center;gap:6px}
+  .match .lab{font-weight:bold;font-size:clamp(16px,2.2vw,22px)}
+  .match .row button{width:clamp(40px,5.5vw,54px);height:clamp(40px,5.5vw,54px);border-radius:50%;border:3px solid var(--ink);
+    background:#fff;font-size:clamp(18px,2.6vw,24px);font-weight:bold;color:var(--ink);box-shadow:0 3px 0 var(--ink)}
+  .match .row button.picked{background:#fbe7a8}
+  .match .row button.wrong{background:#f6d0cb;animation:shake .4s}
+  .match .row button.right{background:#c9ecd5}
+  .match .check{border:0;border-radius:20px;background:var(--blue);color:#fff;font-weight:bold;padding:8px 22px;font-size:16px}
+  .match .check[hidden]{display:none}
   @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
   .rotate{display:none;position:absolute;top:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.65);color:#fff;
@@ -218,6 +230,11 @@ function key(){ return ch.id + "_" + p; }
 function locked(){ const pz = ch.puzzles && ch.puzzles[p]; return !!pz && !solved[key()]; }
 
 function addPuzzle(page, pz){
+  if (pz.type === "match") return addMatch(page, pz);
+  return addChoice(page, pz);
+}
+
+function addChoice(page, pz){
   const box = document.createElement("div");
   box.className = "puzzle";
   const done = solved[key()];
@@ -251,10 +268,71 @@ function addPuzzle(page, pz){
   page.appendChild(box);
 }
 
+/* matching puzzle: each item on the left must be paired with a picture letter */
+function addMatch(page, pz){
+  const box = document.createElement("div");
+  box.className = "puzzle match";
+  const done = solved[key()];
+  const picks = {};
+  box.innerHTML = `<div class="q">${pz.question}</div>
+    <div class="rows">${pz.items.map(it => `
+      <div class="row" data-i="${it}"><span class="lab">${it} →</span>
+        ${pz.options.map(o => `<button data-i="${it}" data-o="${o}" class="${done && pz.answer[it]===o ? "right":""}">${o}</button>`).join("")}
+      </div>`).join("")}
+    <button class="check" ${done ? "hidden":""}>Check</button></div>
+    <div class="fb ${done ? "good":""}">${done ? pz.right : ""}</div>`;
+  let tries = 0;
+  const fb = box.querySelector(".fb");
+  box.querySelectorAll(".row button").forEach(btn => {
+    btn.onclick = e => {
+      e.stopPropagation();
+      if (solved[key()]) return;
+      const it = btn.dataset.i;
+      picks[it] = btn.dataset.o;
+      box.querySelectorAll(`.row[data-i="${it}"] button`).forEach(b => b.classList.remove("picked","wrong"));
+      btn.classList.add("picked");
+      fb.textContent = ""; fb.className = "fb";
+    };
+  });
+  const finish = () => {
+    pz.items.forEach(it => {
+      box.querySelectorAll(`.row[data-i="${it}"] button`).forEach(b => {
+        b.classList.remove("picked","wrong");
+        if (b.dataset.o === pz.answer[it]) b.classList.add("right");
+      });
+    });
+    fb.className = "fb good"; fb.textContent = pz.right;
+    box.querySelector(".check").hidden = true;
+    const sk = box.querySelector(".skip"); if (sk) sk.remove();
+    solved[key()] = true; store.set("solved", solved);
+    $("#nextBtn").disabled = false;
+  };
+  box.querySelector(".check").onclick = e => {
+    e.stopPropagation();
+    if (pz.items.some(it => !picks[it])){ fb.className = "fb bad"; fb.textContent = "Match every word first!"; return; }
+    const wrongItems = pz.items.filter(it => picks[it] !== pz.answer[it]);
+    if (!wrongItems.length) return finish();
+    tries++;
+    wrongItems.forEach(it => {
+      const b = box.querySelector(`.row[data-i="${it}"] button[data-o="${picks[it]}"]`);
+      b.classList.remove("wrong"); void b.offsetWidth; b.classList.add("wrong");
+    });
+    fb.className = "fb bad";
+    fb.textContent = `${pz.items.length - wrongItems.length} of ${pz.items.length} correct. ${pz.wrong}`;
+    if (tries >= 3 && !box.querySelector(".skip")){
+      const s = document.createElement("button");
+      s.className = "skip"; s.textContent = "Show me the answer";
+      s.onclick = ev => { ev.stopPropagation(); finish(); };
+      box.appendChild(s);
+    }
+  };
+  page.appendChild(box);
+}
+
 function next(){
   if (locked()){
     const fb = document.querySelector(".puzzle .fb");
-    if (fb){ fb.className = "fb bad"; fb.textContent = "Pick A, B or C first!"; }
+    if (fb){ fb.className = "fb bad"; fb.textContent = document.querySelector(".puzzle.match") ? "Finish the matching first!" : "Pick A, B or C first!"; }
     return;
   }
   if (p < ch.pages){ p++; show(); } else closeReader();
