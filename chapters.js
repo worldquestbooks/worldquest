@@ -151,6 +151,22 @@ window.CHAPTERS = [
       }
     }
   },
-  { id: "ch09", num: 9,  title: "Machu Picchu",         pages: 0, ready: false },
-  { id: "ch10", num: 10, title: "Home to Thailand",     pages: 0, ready: false }
+  {
+    id: "ch09", num: 9,
+    title: "Yellowstone",
+    subtitle: "Someday…",
+    pages: 40,
+    ready: true,
+    ext: "png",
+    puzzles: {
+      24: {
+        question: "Why is the hot spring so colorful?",
+        options: ["A", "B", "C"],
+        answer: "B",
+        wrong: "Not quite! Remember Ah Gong's note: tiny life makes big colors.",
+        right: "Yes! Tiny living things called microbes make the colors!"
+      }
+    }
+  },
+  { id: "ch10", num: 10, title: "Home",                 pages: 0, ready: false }
 ];
