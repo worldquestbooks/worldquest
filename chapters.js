@@ -117,8 +117,40 @@ window.CHAPTERS = [
       }
     }
   },
-  { id: "ch07", num: 7,  title: "Australia",            pages: 0, ready: false },
-  { id: "ch08", num: 8,  title: "A U.S. National Park", pages: 0, ready: false },
+  {
+    id: "ch07", num: 7,
+    title: "Great Barrier Reef",
+    subtitle: "Not yet…",
+    pages: 36,
+    ready: true,
+    ext: "png",
+    puzzles: {
+      29: {
+        question: "Which fish lives inside a home that stings?",
+        options: ["A", "B", "C"],
+        answer: "B",
+        wrong: "Not quite! Look for a fish hiding in waving tentacles.",
+        right: "Yes! The clownfish lives safely inside the anemone!"
+      }
+    }
+  },
+  {
+    id: "ch08", num: 8,
+    title: "Grand Canyon",
+    subtitle: "Layers…",
+    pages: 36,
+    ready: true,
+    ext: "png",
+    puzzles: {
+      26: {
+        question: "Which rock layer is the oldest?",
+        options: ["A", "B", "C"],
+        answer: "C",
+        wrong: "Not quite! Ah Gong says: the oldest story is always at the bottom.",
+        right: "Right! The bottom layer is the oldest — almost 2 billion years old!"
+      }
+    }
+  },
   { id: "ch09", num: 9,  title: "Machu Picchu",         pages: 0, ready: false },
   { id: "ch10", num: 10, title: "Home to Thailand",     pages: 0, ready: false }
 ];
