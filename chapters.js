@@ -100,7 +100,23 @@ window.CHAPTERS = [
       }
     }
   },
-  { id: "ch06", num: 6,  title: "Istanbul",             pages: 0, ready: false },
+  {
+    id: "ch06", num: 6,
+    title: "Istanbul",
+    subtitle: "Two sides…",
+    pages: 36,
+    ready: true,
+    ext: "png",
+    puzzles: {
+      26: {
+        question: "Which ferry takes you from Europe to Asia?",
+        options: ["A", "B", "C"],
+        answer: "B",
+        wrong: "Not quite! Check the map — which pier is on the ASIA side?",
+        right: "Yes! Eminönü to Kadıköy — Europe to Asia!"
+      }
+    }
+  },
   { id: "ch07", num: 7,  title: "Australia",            pages: 0, ready: false },
   { id: "ch08", num: 8,  title: "A U.S. National Park", pages: 0, ready: false },
   { id: "ch09", num: 9,  title: "Machu Picchu",         pages: 0, ready: false },
